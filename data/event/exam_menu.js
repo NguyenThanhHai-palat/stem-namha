@@ -221,7 +221,13 @@ async function register() {
   });
 
   const result = await res.json();
-  alert(JSON.stringify(result));
+  if(result.message=="OK"){
+    alert("Đăng ký thành công, vui lòng đăng nhập!")
+  }
+  else{
+    alert("Lỗi :"+ result.message)
+  }
+  
 }
 async function login() {
   const data = {
@@ -249,7 +255,7 @@ async function login() {
     console.log(seconds);
     }, 1000);
   } else {
-    alert(JSON.stringify(result));
+    alert(result.message);
   }
 }
 window.addEventListener("DOMContentLoaded", async() => {
