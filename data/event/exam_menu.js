@@ -50,7 +50,7 @@ async function LoadAccount() {
                     <input type="password"  id="l_password" placeholder="Mật khẩu" required>
                 </div>
                 <div class="form-options">
-                    <a onclick='alert("phải chịu, inbox với chủ clb đi nha hết cứu r :))")'>Quên mật khẩu?</a>
+                    <a onclick='alert("phải chịu, inbox với chủ web đi nha hết cứu r :))")'>Quên mật khẩu?</a>
                 </div>
                 <button onclick="login()" type="button" class="btn-auth">Đăng nhập</button>
             </form>
