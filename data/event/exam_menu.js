@@ -239,7 +239,15 @@ async function login() {
 
   if (result.token) {
     localStorage.setItem("token", result.token);
-    alert("Login thành công!");
+    alert("Đăng nhập thành công!");
+    var delayInMilliseconds = 500;
+    setTimeout(function() {
+        window.open("/exam/" ,"_self");
+    }, delayInMilliseconds);
+    var seconds = 0;
+    setInterval(function() {timer.innerHTML = seconds++;
+    console.log(seconds);
+    }, 1000);
   } else {
     alert(JSON.stringify(result));
   }
