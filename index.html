@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Palatexam APP v1</title>
+
+</head>
+<body>
+  <script>
+window.location.href = "/exam/";
+</script>
+<script>
+  var delayInMilliseconds = 500;
+  setTimeout(function() {
+    window.open("/exam/" ,"_self");
+  }, delayInMilliseconds);
+  var seconds = 0;
+  setInterval(function() {timer.innerHTML = seconds++;
+  console.log(seconds);
+  }, 1000);
+
+  </script>
+</body>
+</html>
