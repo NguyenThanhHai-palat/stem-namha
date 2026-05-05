@@ -23,6 +23,7 @@ async function Check_account(){
   if(res.status === 200){
     const data = await res.json();
     Had_Sigin = 1;
+    
     return data; 
   } else {
     Had_Sigin = 2;
@@ -193,6 +194,7 @@ async function Load_Home(){
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                 expires = "; expires=" + date.toUTCString();
             }
+            console.log("ok")
             document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }
 function getCookie(name) {
@@ -265,6 +267,7 @@ window.addEventListener("DOMContentLoaded", async() => {
    var utmSource = params.get("to");
     
    DATA_USER = await Check_account(); console.log(Had_Sigin)
+   setCookie("iduser", DATA_USER.id, 14);
    if(utmSource=="my_profile") LoadAccount();
    else {
     
