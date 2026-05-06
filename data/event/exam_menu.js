@@ -219,7 +219,7 @@ async function LoadResult() {
                 
                 htmlContent += `
                     <tr style="text-align: center;">
-                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.tende}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.nameexam}</td>
                         <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.idexam}</td>
                         <td style="padding: 10px; border: 1px solid #ddd; color: red; font-weight: bold;">${item.total_score || item.score}</td>
                         <td style="padding: 10px; border: 1px solid #ddd;">${item.correct_count || item.correct}/${item.total_questions || item.total}</td>
