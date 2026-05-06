@@ -129,7 +129,7 @@ async function Load_Home(){
     var examlist = "";
     var examlist_score = "";
     data_return_json.data_exam.forEach((sp, index) => {
-        
+        let statusexam = sp.status =="0" ? 'hidden' : '';
         examlist_score = examlist_score+ `<h4 id="exam-data-title-1">${sp.title_exam}</h4>
                             <p id="exam-data-describe-1">${sp.describe_exam_result}</p> `
         examlist = examlist + `
@@ -141,7 +141,7 @@ async function Load_Home(){
                             <p><i class="far fa-calendar-alt"></i> ${sp.describe_exam}</p>
                             <p><i class="far fa-clock"></i> ${sp.form_exam}</p>
                         </div>
-                        <button onclick='start("${sp.idexam}")'class="btn-start">Vào thi</button>
+                        <button ${statusexam} onclick='start("${sp.idexam}")'class="btn-start">Vào thi</button>
                     </div>`
     });
     const data_returning=`
@@ -284,6 +284,8 @@ async function register() {
   const result = await res.json();
   if(result.message=="OK"){
     alert("Đăng ký thành công, vui lòng đăng nhập!")
+     var delayInMilliseconds = 500;
+    setTimeout(function() { window.open("/exam/" ,"_self");}, delayInMilliseconds);var seconds = 0; setInterval(function() {timer.innerHTML = seconds++;console.log(seconds);}, 1000);
   }
   else{
     alert("Lỗi :"+ result.message)
@@ -308,13 +310,7 @@ async function login() {
     localStorage.setItem("token", result.token);
     alert("Đăng nhập thành công!");
     var delayInMilliseconds = 500;
-    setTimeout(function() {
-        window.open("/exam/" ,"_self");
-    }, delayInMilliseconds);
-    var seconds = 0;
-    setInterval(function() {timer.innerHTML = seconds++;
-    console.log(seconds);
-    }, 1000);
+    setTimeout(function() { window.open("/exam/" ,"_self");}, delayInMilliseconds);var seconds = 0; setInterval(function() {timer.innerHTML = seconds++;console.log(seconds);}, 1000);
   } else {
     alert(result.message);
   }
