@@ -281,7 +281,7 @@ window.addEventListener("DOMContentLoaded", async() => {
    
 });
 function start(id){
-     window.open(`/exam/dethi.html${id}` ,"_self");
+     window.open(`/exam/dethi.html?id-exam=${id}` ,"_self");
 }
 function toggleAuth(type) {
             const loginForm = document.getElementById('login-form');
