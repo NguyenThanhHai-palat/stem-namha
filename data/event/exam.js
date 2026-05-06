@@ -117,8 +117,8 @@ async function checkHistory() {
             document.getElementById("quiz").innerHTML = `
                 <div style="text-align:center; padding: 30px; border: 2px dashed #2196F3; border-radius: 10px;">
                     <h2 style="color: #2196F3;">BẠN ĐÃ HOÀN THÀNH ĐỀ SỐ ${idExam}</h2>
-                    <p style="font-size: 1.5em;">Điểm đạt được: <span style="color:red">${currentExamHistory.score}</span></p>
-                    <p>Số câu đúng: ${currentExamHistory.correct}/${currentExamHistory.total}</p>
+                    <p style="font-size: 1.5em;">Điểm đạt được: <span style="color:red">${currentExamHistory.total_score}</span></p>
+                    <p>Số câu đúng: ${currentExamHistory.correct_count}/${currentExamHistory.total_questions}</p>
                     <p><i>Hệ thống đã khóa tính năng làm lại cho mã đề này.</i></p>
                 </div>
             `;
