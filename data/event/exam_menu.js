@@ -199,7 +199,6 @@ async function LoadResult() {
         });
         
         const history = await res.json(); 
-
         if (history && history.length > 0) {
             let htmlContent = `
                 <div style="padding: 20px; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
@@ -207,7 +206,8 @@ async function LoadResult() {
                     <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                         <thead>
                             <tr style="background: #2196F3; color: white;">
-                                <th style="padding: 10px; border: 1px solid #ddd;">Mã đề</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">Tên bài</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">Số hiệu đề</th>
                                 <th style="padding: 10px; border: 1px solid #ddd;">Điểm</th>
                                 <th style="padding: 10px; border: 1px solid #ddd;">Số Câu Đúng</th>
                             </tr>
@@ -219,6 +219,7 @@ async function LoadResult() {
                 
                 htmlContent += `
                     <tr style="text-align: center;">
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.idexam}</td>
                         <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.idexam}</td>
                         <td style="padding: 10px; border: 1px solid #ddd; color: red; font-weight: bold;">${item.total_score || item.score}</td>
                         <td style="padding: 10px; border: 1px solid #ddd;">${item.correct_count || item.correct}/${item.total_questions || item.total}</td>

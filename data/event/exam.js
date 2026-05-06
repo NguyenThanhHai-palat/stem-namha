@@ -1,6 +1,7 @@
 let quizData = [];
 var POINT_PER_QUESTION = 0.25;
 const userId = getCookie("iduser");
+var nameofexam = "Trống"
 // Hàm bổ trợ: Lấy giá trị Cookie theo tên
 function getCookie(name) {
     const value = `; ${document.cookie}`;
@@ -63,6 +64,7 @@ async function loadData() {
         const data = await response.json();
         Check_account();
         document.getElementById("title").innerText = data.tende;
+        nameofexam= data.tende;
         quizData = data.data;
         idExam = data.idexam; // Lấy ID đề từ JSON
         POINT_PER_QUESTION = data.point;
@@ -120,7 +122,7 @@ async function checkHistory() {
                     <h2 style="color: #2196F3;">BẠN ĐÃ HOÀN THÀNH ĐỀ SỐ ${idExam}</h2>
                     <p style="font-size: 1.5em;">Điểm đạt được: <span style="color:red">${currentExamHistory.total_score}</span></p>
                     <p>Số câu đúng: ${currentExamHistory.correct_count}/${currentExamHistory.total_questions}</p>
-                    <p><i>Hệ thống đã khóa tính năng làm lại cho mã đề này.</i></p>
+                    <p><i>Bạn không thể xem lại bài làm tại đây bạn sẽ xem lại được bài làm sau khi bài thi kết thúc ngày.</i></p>
                 </div>
             `;
             document.getElementById("btn-submit").style.display = "none";
@@ -173,6 +175,7 @@ async function submitQuiz() {
     const totalScore = correctCount * POINT_PER_QUESTION;
 
     const resultPayload = {
+        nameexam:nameofexam,
         iduser: userId,
         idexam: idExam,
         total_score: totalScore.toFixed(2),
