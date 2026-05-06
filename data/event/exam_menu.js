@@ -23,7 +23,7 @@ async function Check_account(){
   if(res.status === 200){
     const data = await res.json();
     Had_Sigin = 1;
-    
+    setCookie("iduser", DATA_USER.id, 14);
     return data; 
   } else {
     Had_Sigin = 2;
@@ -267,7 +267,7 @@ window.addEventListener("DOMContentLoaded", async() => {
    var utmSource = params.get("to");
     
    DATA_USER = await Check_account(); console.log(Had_Sigin)
-   setCookie("iduser", DATA_USER.id, 14);
+   
    if(utmSource=="my_profile") LoadAccount();
    else {
     
@@ -280,7 +280,7 @@ window.addEventListener("DOMContentLoaded", async() => {
    
 });
 function start(id){
-    alert("Kỳ thi chưa sẵn sàng")
+     window.open(`/exam/dethi.html${id}` ,"_self");
 }
 function toggleAuth(type) {
             const loginForm = document.getElementById('login-form');
