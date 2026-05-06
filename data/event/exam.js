@@ -221,4 +221,8 @@ function closeModal() {
     document.getElementById("score-modal").style.display = "none";
 }
 
-window.onload = loadData;
+window.addEventListener("DOMContentLoaded", async() => {
+   
+   loadData()
+   
+});
