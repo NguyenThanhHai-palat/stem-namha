@@ -1,5 +1,5 @@
 let quizData = [];
-const POINT_PER_QUESTION = 0.25;
+var POINT_PER_QUESTION = 0.25;
 const userId = getCookie("iduser");
 // Hàm bổ trợ: Lấy giá trị Cookie theo tên
 function getCookie(name) {
