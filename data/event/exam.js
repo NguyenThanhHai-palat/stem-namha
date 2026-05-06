@@ -65,6 +65,7 @@ async function loadData() {
         document.getElementById("title").innerText = data.tende;
         quizData = data.data;
         idExam = data.idexam; // Lấy ID đề từ JSON
+        POINT_PER_QUESTION = data.point;
         checkHistory();
         
     } catch (err) {
@@ -75,6 +76,7 @@ async function loadData() {
 function renderQuiz() {
     const quizDiv = document.getElementById("quiz");
     quizDiv.innerHTML = "";
+
     quizData.forEach((q, index) => {
         const div = document.createElement("div");
         div.className = "question";
