@@ -89,7 +89,6 @@ async function Check_account(){
   if(res.status === 200){
     const data = await res.json();
     Had_Sigin = 1;
-    setCookie("iduser", DATA_USER.id, 14);
     return data; 
   } else {
     var delayInMilliseconds = 500;
@@ -186,7 +185,7 @@ async function checkHistory() {
 async function submitQuiz() {
     let correctCount = 0;
     let studentChoices = [];
-    const userId = getCookie("iduser"); 
+        
 
     quizData.forEach((q, index) => {
         const div = document.getElementById(`q-container-${index}`);
