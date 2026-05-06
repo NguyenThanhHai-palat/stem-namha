@@ -23,7 +23,7 @@ async function Check_account(){
   if(res.status === 200){
     const data = await res.json();
     Had_Sigin = 1;
-    setCookie("iduser", DATA_USER.id, 14);
+    
     return data; 
   } else {
     Had_Sigin = 2;
@@ -274,6 +274,7 @@ window.addEventListener("DOMContentLoaded", async() => {
     if (Had_Sigin == 2) {
         LoadAccount();
     } else {
+        setCookie("iduser", DATA_USER.id, 14);
         Load_Home();
     }
    }
