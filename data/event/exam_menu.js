@@ -243,7 +243,7 @@ async function LoadResult() {
         }
     } catch (e) {
         console.error("Lỗi load lịch sử:", e);
-        document.getElementById("MAIN").innerHTML = "<p>Không thể tải lịch sử lúc này.</p>";
+        document.getElementById("MAIN").innerHTML = "<p>Không thể tải lịch sử lúc này.</p>" + e;
     }
 }
  function setCookie(name, value, days) {

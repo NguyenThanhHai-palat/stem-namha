@@ -78,7 +78,7 @@ async function loadData() {
 function renderQuiz() {
     const quizDiv = document.getElementById("quiz");
     quizDiv.innerHTML = "";
-
+    
     quizData.forEach((q, index) => {
         const div = document.createElement("div");
         div.className = "question";
@@ -99,6 +99,10 @@ function renderQuiz() {
         div.innerHTML = html;
         quizDiv.appendChild(div);
     });
+    if (!quizData || !Array.isArray(quizData)) {
+    document.getElementById("quiz").innerHTML = "Không có dữ liệu câu hỏi!";
+    return;
+}
 }
 async function checkHistory() {
     if (!userId) {
