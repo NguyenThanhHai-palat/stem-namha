@@ -187,6 +187,64 @@ async function Load_Home(){
     `
   document.getElementById("MAIN").innerHTML = data_returning;
 }
+async function LoadResult() {
+    const userId = getCookie("iduser"); // Đảm bảo lấy được userId
+    if (!userId) return;
+
+    try {
+        const res = await fetch('https://dnc-svc.palat.io.vn/exam/search', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id: userId })
+        });
+        
+        const history = await res.json(); 
+
+        if (history && history.length > 0) {
+            let htmlContent = `
+                <div style="padding: 20px; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                    <h2 style="text-align:center; color: #2196F3;">LỊCH SỬ THI CỦA BẠN</h2>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background: #2196F3; color: white;">
+                                <th style="padding: 10px; border: 1px solid #ddd;">Mã đề</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">Điểm</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">Số Câu Đúng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            history.forEach(item => {
+                let timeStr = item.timestamp ? new Date(item.timestamp).toLocaleString('vi-VN') : "---";
+                
+                htmlContent += `
+                    <tr style="text-align: center;">
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.idexam}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; color: red; font-weight: bold;">${item.total_score || item.score}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">${item.correct_count || item.correct}/${item.total_questions || item.total}</td>
+                    </tr>
+                `;
+            });
+
+            htmlContent += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            document.getElementById("MAIN").innerHTML = htmlContent;
+        } else {
+            document.getElementById("MAIN").innerHTML = `
+                <div style="text-align:center; padding: 50px;">
+                    <p>Bạn chưa thực hiện bài thi nào.</p>
+                </div>
+            `;
+        }
+    } catch (e) {
+        console.error("Lỗi load lịch sử:", e);
+        document.getElementById("MAIN").innerHTML = "<p>Không thể tải lịch sử lúc này.</p>";
+    }
+}
  function setCookie(name, value, days) {
             let expires = "";
             if (days) {

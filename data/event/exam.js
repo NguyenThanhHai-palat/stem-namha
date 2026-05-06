@@ -113,7 +113,6 @@ async function checkHistory() {
         const currentExamHistory = history.find(item => String(item.idexam) === String(idExam));
 
         if (currentExamHistory) {
-            // Nếu tìm thấy lịch sử ĐÚNG mã đề này
             document.getElementById("quiz").innerHTML = `
                 <div style="text-align:center; padding: 30px; border: 2px dashed #2196F3; border-radius: 10px;">
                     <h2 style="color: #2196F3;">BẠN ĐÃ HOÀN THÀNH ĐỀ SỐ ${idExam}</h2>
