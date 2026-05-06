@@ -327,6 +327,7 @@ window.addEventListener("DOMContentLoaded", async() => {
    DATA_USER = await Check_account(); console.log(Had_Sigin)
    
    if(utmSource=="my_profile") LoadAccount();
+   else if(utmSource == "result_exam") LoadResult()
    else {
     
     if (Had_Sigin == 2) {
