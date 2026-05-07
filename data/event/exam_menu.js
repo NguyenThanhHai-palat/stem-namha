@@ -210,6 +210,7 @@ async function LoadResult() {
                                 <th style="padding: 10px; border: 1px solid #ddd;">Số hiệu đề</th>
                                 <th style="padding: 10px; border: 1px solid #ddd;">Điểm</th>
                                 <th style="padding: 10px; border: 1px solid #ddd;">Số Câu Đúng</th>
+                                 <th style="padding: 10px; border: 1px solid #ddd;">Chi tiết bài làm</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -223,6 +224,7 @@ async function LoadResult() {
                         <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.idexam}</td>
                         <td style="padding: 10px; border: 1px solid #ddd; color: red; font-weight: bold;">${item.total_score || item.score}</td>
                         <td style="padding: 10px; border: 1px solid #ddd;">${item.correct_count || item.correct}/${item.total_questions || item.total}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Hiện chưa cho xem</td>
                     </tr>
                 `;
             });
