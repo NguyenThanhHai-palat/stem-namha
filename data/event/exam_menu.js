@@ -125,7 +125,7 @@ async function Load_Home(){
     const res = await fetch("https://data.palat.io.vn/clbnamha/read");
     const data_return_json = await res.json();
     console.log(data_return_json,data_return_json.title)
-   
+    
     var examlist = "";
     var examlist_score = "";
     data_return_json.data_exam.forEach((sp, index) => {
@@ -141,7 +141,7 @@ async function Load_Home(){
                             <p><i class="far fa-calendar-alt"></i> ${sp.describe_exam}</p>
                             <p><i class="far fa-clock"></i> ${sp.form_exam}</p>
                         </div>
-                        <button ${statusexam} onclick='start("${sp.idexam}")'class="btn-start">Vào thi</button>
+                        <button ${statusexam} onclick='start("${sp.idexam}","${sp.url}")'class="btn-start">Vào thi</button>
                     </div>`
     });
     const data_returning=`
@@ -338,8 +338,10 @@ window.addEventListener("DOMContentLoaded", async() => {
    }
    
 });
-function start(id){
-     window.open(`../exam/dethi.html?id-exam=${id}` ,"_self");
+function start(id,url){
+    if(url.length>1) window.open(`${url}` ,"_self");
+
+    else  window.open(`../exam/dethi.html?id-exam=${id}` ,"_self");
 }
 function toggleAuth(type) {
             const loginForm = document.getElementById('login-form');

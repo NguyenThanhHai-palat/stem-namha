@@ -141,42 +141,69 @@ async function checkHistory() {
 async function submitQuiz() {
     let correctCount = 0;
     let studentChoices = [];
-        
-
+    let isCorrect = false;
+    let scoreForThisQuestion = 0;
     quizData.forEach((q, index) => {
         const div = document.getElementById(`q-container-${index}`);
+        
         let userAns = "";
+        
+        if (q.type === "tln") {
+            userAns = document.getElementById(`text${index}`).value.trim();
+        } 
+        if (q.type === "ds" || q.type === "ds2018") {
+            let userPattern = [];
+            for (let j = 0; j < 4; j++) {
+                let val = document.querySelector(`input[name="q${index}_opt${j}"]:checked`)?.value || "";
+                userPattern.push(val);
+            }
+            let userAnsString = userPattern.join("-"); 
+            let targetAns = q.ans.trim();
 
-        if (q.ans_w && q.ans_w.length > 0) {
+            let correctCount = 0;
+            let targetParts = targetAns.split("-");
+            userPattern.forEach((val, idx) => {
+                if (val === targetParts[idx]) correctCount++;
+            });
+
+            if (q.type === "ds2018") {
+                const scoreMap = { 1: 0.1, 2: 0.25, 3: 0.5, 4: 1.0 };
+                scoreForThisQuestion = scoreMap[correctCount] || 0;
+                isCorrect = (correctCount === 4); 
+            } else {
+                scoreForThisQuestion = (correctCount / 4);
+                isCorrect = (correctCount === 4);
+            }
+            totalScore += scoreForThisQuestion;
+        }
+        else {
             let selected = document.querySelector(`input[name="q${index}"]:checked`);
             userAns = selected ? selected.value : "";
-        } else {
-            userAns = document.getElementById(`text${index}`).value.trim();
         }
 
-        let correctAns = q.ans.trim();
-        let isCorrect = userAns.toLowerCase() === correctAns.toLowerCase();
-        if (isCorrect) correctCount++;
-
-        studentChoices.push({
-            question_label: q.label,
-            selected_ans: userAns,
-            correct_ans: correctAns,
-            is_correct: isCorrect
-        });
-
-        div.classList.remove("correct", "wrong");
+        let isCorrect = userAns.toLowerCase() === q.ans.trim().toLowerCase();
         let oldResult = div.querySelector(".answer-result");
         if (oldResult) oldResult.remove();
 
         let resultDiv = document.createElement("div");
         resultDiv.className = "answer-result";
-        resultDiv.innerHTML = isCorrect ? "<b>Đáp án đúng</b>" : `<b>Đáp án Sai!</b><br>Đáp án đúng là: <b>${correctAns}</b>`;
+        
+        if (isCorrect) {
+            div.classList.add("correct");
+            resultDiv.innerHTML = `<b> Đúng!</b><br><small> Giải thích: ${q.reasons}</small>`;
+        } else {
+            div.classList.add("wrong");
+            resultDiv.innerHTML = `
+                <b> Sai!</b><br>
+                Bạn nhập: <i>${userAns || "Trống"}</i><br>
+                Đáp án đúng: <b>${q.ans}</b><br>
+                <small> Giải thích: ${q.reasons}</small>
+            `;
+        }
         div.appendChild(resultDiv);
-        div.style.display = "none";
     });
 
-    const totalScore = correctCount * POINT_PER_QUESTION;
+    const totalScore = totalScore +correctCount * POINT_PER_QUESTION;
 
     const resultPayload = {
         nameexam:nameofexam,

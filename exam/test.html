@@ -4,23 +4,107 @@
     <meta charset="UTF-8">
     <title>Quản lý kết quả thi</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f0f2f5; }
-        .admin-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #4CAF50; color: white; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        .badge { padding: 5px 10px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
-        .score { color: #d32f2f; font-weight: bold; }
+        :root { --primary: #2196F3; --dark: #333; }
+        body { font-family: Arial, sans-serif; display: flex; margin: 0; background: #f4f4f4; }
+    
+        .sidebar { width: 250px; background: var(--dark); color: white; height: 100vh; padding: 20px; position: fixed; }
+        .sidebar h2 { border-bottom: 1px solid #555; padding-bottom: 10px; }
+        .nav-item { padding: 15px; cursor: pointer; border-bottom: 1px solid #444; }
+        .nav-item:hover { background: #444; }
+
+        /* Main Content */
+        .content { margin-left: 280px; padding: 30px; width: calc(100% - 310px); }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; }
+        .section.active { display: block; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #eee; }
+
+        .btn { padding: 8px 15px; border: none; cursor: pointer; border-radius: 4px; color: white; font-weight: bold; }
+        .btn-add { background: #4CAF50; margin-bottom: 15px; }
+        .btn-del { background: #f44336; }
+        .btn-edit { background: #FF9800; }
+
+        textarea { width: 100%; height: 200px; font-family: monospace; margin-bottom: 10px; }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+<div class="sidebar">
+    <h2>Admin DNC</h2>
+    <div class="nav-item" onclick="showSection('sec-exams')">📂 Quản lý Đề thi</div>
+    <div class="nav-item" onclick="showSection('sec-results')">📊 Xem Điểm</div>
+</div>
 
-<div class="admin-container">
-    <h1>Bảng điểm tổng hợp toàn bộ thí sinh</h1>
-    <div id="stats">Đang tải dữ liệu...</div>
+<div class="content">
+    <!-- SECTION: QUẢN LÝ ĐỀ -->
+    <div id="sec-exams" class="section active">
+        <h1>Danh sách Đề thi</h1>
+        <button class="btn btn-add" onclick="openExamModal()">+ Đăng đề mới (JSON)</button>
+        <table id="examTable">
+            <thead>
+                <tr>
+                    <th>Mã Đề</th>
+                    <th>Tên Đề</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="examBody"></tbody>
+        </table>
+
+        <!-- Form Đăng/Sửa đề -->
+       <div id="admin-creator" style="max-width: 900px; margin: auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); font-family: sans-serif;">
+    <h2 style="color: #2196F3;">TẠO ĐỀ THỦ CÔNG</h2>
     
-    <table id="adminTable">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+        <div>
+            <label>Tên đề thi:</label>
+            <input type="text" id="examName" value="Đề thi nâng cao" style="width: 100%;">
+        </div>
+        <div>
+            <label>Mã đề (idexam):</label>
+            <input type="text" id="examId" value="1430" style="width: 100%;">
+        </div>
+    </div>
+
+    <div style="background: #f1f8ff; padding: 20px; border-radius: 8px; border: 1px solid #cde4ff;">
+        <label><b>1. Chọn loại câu hỏi:</b></label>
+        <select id="typeSelector" onchange="toggleForm()" style="padding: 8px; width: 100%; margin-top: 5px;">
+            <option value="text">Trắc nghiệm (Chữ/Ảnh)</option>
+            <option value="image">Câu hỏi có ảnh minh họa (Label là URL)</option>
+            <option value="tln">Tự luận (Điền số/chữ)</option>
+            <option value="ds">Đúng/Sai (Tự do)</option>
+            <option value="ds2018">Đúng/Sai (Bộ GD 2018)</option>
+        </select>
+
+        <div id="questionForm" style="margin-top: 20px;">
+            <!-- Form nội dung đổ vào đây -->
+        </div>
+
+        <button onclick="addQuestion()" style="background: #4CAF50; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: bold;">
+            + THÊM CÂU HỎI VÀO DANH SÁCH
+        </button>
+    </div>
+
+    <h3 style="margin-top: 30px;">Danh sách câu hỏi (<span id="qCount">0</span>)</h3>
+    <div id="previewList" style="background: #f9f9f9; padding: 10px; border: 1px solid #ddd; min-height: 50px; border-radius: 5px;"></div>
+
+    <button onclick="exportJSON()" style="background: #2196F3; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 1.1em; font-weight: bold; margin-top: 20px;">
+        ĐĂNG ĐỀ
+    </button>
+    </div>
+    </div>
+
+    <!-- SECTION: XEM ĐIỂM -->
+    <div id="sec-results" class="section">
+        <h1>Kết quả bài thi</h1>
+        <div style="margin-bottom: 15px;">
+            Lọc theo Mã Đề: 
+            <input type="text" id="filterExam" placeholder="Nhập mã đề..." onkeyup="filterTable()">
+        </div>
+        <table id="adminTable">
         <thead>
             <tr>
                 <th>STT</th>
@@ -31,13 +115,123 @@
                 <th>Thời gian nộp</th>
             </tr>
         </thead>
-        <tbody id="adminBody">
+        <tbody id="adminBody" class="result-row">
             <!-- Dữ liệu sẽ đổ vào đây -->
         </tbody>
     </table>
+    </div>
 </div>
 
+
+
 <script>
+
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id === 'sec-exams') loadExams();
+    if(id === 'sec-results') loadAllResults();
+}
+function openExamModal() {
+    document.getElementById('examForm').style.display = 'block';
+    document.getElementById("jsonInput").value = "";
+}
+
+let questions = [];
+
+function toggleForm() {
+    const type = document.getElementById("typeSelector").value;
+    const form = document.getElementById("questionForm");
+    
+    let baseHtml = `
+        <label>Câu hỏi (Nhập chữ hoặc URL ảnh):</label>
+        <textarea id="label" style="width:100%; height:50px; margin-bottom:10px;"></textarea>
+        <label>Giải thích (Reasons):</label>
+        <textarea id="reasons" style="width:100%; height:40px; margin-bottom:10px;"></textarea>
+    `;
+
+    if (type === 'text' || type === 'image') {
+        form.innerHTML = baseHtml + `
+            <p style="font-size: 0.85em; color: #666;">* Định dạng đáp án: <b>Nội dung chữ | URL Ảnh (nếu có)</b></p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <input type="text" id="ans_true" placeholder="Đáp án ĐÚNG | URL ảnh" style="border-left: 5px solid green; padding-left: 10px;">
+                <input type="text" id="ans_w1" placeholder="Đáp án sai 1 | URL ảnh" style="border-left: 5px solid red; padding-left: 10px;">
+                <input type="text" id="ans_w2" placeholder="Đáp án sai 2 | URL ảnh" style="border-left: 5px solid red; padding-left: 10px;">
+                <input type="text" id="ans_w3" placeholder="Đáp án sai 3 | URL ảnh" style="border-left: 5px solid red; padding-left: 10px;">
+            </div>
+        `;
+    } else if (type === 'tln') {
+        form.innerHTML = baseHtml + `<input type="text" id="ans_single" placeholder="Đáp án đúng (chữ/số)" style="width:100%;">`;
+    } // Thay thế đoạn xử lý ds2018 cũ bằng đoạn này:
+    else if (type === 'ds2018' || type === 'ds') {
+        form.innerHTML = baseHtml + `
+            <p style="font-size: 0.85em; color: #666;">* Nhập ý: <b>Tên ý | URL Ảnh</b> (để trống nếu không có ảnh)</p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <input type="text" id="ds_opt0" placeholder="Ý A | URL ảnh" style="width:100%;">
+                <input type="text" id="ds_opt1" placeholder="Ý B | URL ảnh" style="width:100%;">
+                <input type="text" id="ds_opt2" placeholder="Ý C | URL ảnh" style="width:100%;">
+                <input type="text" id="ds_opt3" placeholder="Ý D | URL ảnh" style="width:100%;">
+                <label style="color: blue; margin-top:10px;">Đáp án (Đ-S-S-Đ):</label>
+                <input type="text" id="ds_ans" placeholder="Ví dụ: Đ-S-Đ-S" style="width:100%;">
+            </div>
+        `;
+    }
+}
+
+function parseOption(val) {
+    const parts = val.split('|');
+    return {
+        text: parts[0].trim(),
+        img: parts[1] ? parts[1].trim() : ""
+    };
+}
+
+function addQuestion() {
+    const type = document.getElementById("typeSelector").value;
+    const label = document.getElementById("label").value;
+    const reasons = document.getElementById("reasons").value;
+    
+    let newQ = { type, label, reasons };
+
+    if (type === 'text' || type === 'image') {
+        newQ.ans = parseOption(document.getElementById("ans_true").value);
+        newQ.ans_w = [
+            parseOption(document.getElementById("ans_w1").value),
+            parseOption(document.getElementById("ans_w2").value),
+            parseOption(document.getElementById("ans_w3").value)
+        ];
+    } else if (type === 'tln') {
+        newQ.ans = document.getElementById("ans_single").value;
+    } // Trong hàm addQuestion(), phần xử lý ds2018:
+        else if (type === 'ds2018' || type === 'ds') {
+            newQ.options = [
+                parseOption(document.getElementById("ds_opt0").value),
+                parseOption(document.getElementById("ds_opt1").value),
+                parseOption(document.getElementById("ds_opt2").value),
+                parseOption(document.getElementById("ds_opt3").value)
+            ];
+            newQ.ans = document.getElementById("ds_ans").value;
+        }
+
+    questions.push(newQ);
+    document.getElementById("qCount").innerText = questions.length;
+    document.getElementById("previewList").innerHTML += `<div>Câu ${questions.length}: ${type}</div>`;
+}
+
+function exportJSON() {
+    const data = {
+        tende: document.getElementById("examName").value,
+        idexam: document.getElementById("examId").value,
+        data: questions
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `de_${data.idexam}.json`;
+    a.click();
+}
+
+toggleForm();
 async function loadAllResults() {
     try {
         const response = await fetch('https://dnc-svc.palat.io.vn/exam/admin/all-results');
@@ -52,8 +246,6 @@ async function loadAllResults() {
             return;
         }
 
-        stats.innerText = `Tổng cộng có ${data.length} lượt nộp bài.`;
-
         data.reverse().forEach((item, index) => {
             const tr = document.createElement("tr");
             const score = item.total_score || item.score || 0;
@@ -64,8 +256,8 @@ async function loadAllResults() {
             tr.innerHTML = `
                 <td>${index + 1}</td>
                 <td><strong>${item.iduser || "Ẩn danh"}</strong></td>
-                <td><span class="badge" style="background:#eee">${item.idexam}</span></td>
-                <td class="score">${score}</td>
+                <td class="exam-id-cell">${item.idexam}</td>
+                <td style="color:red; font-weight:bold" >${score}</td>
                 <td>${correct}/${total}</td>
                 <td>${time}</td>
             `;
@@ -77,7 +269,14 @@ async function loadAllResults() {
     }
 }
 
-// Chạy khi load trang
+function filterTable() {
+    const filter = document.getElementById("filterExam").value.toUpperCase();
+    const rows = document.querySelectorAll(".result-row");
+    rows.forEach(row => {
+        const idCell = row.querySelector(".exam-id-cell").innerText;
+        row.style.display = idCell.toUpperCase().includes(filter) ? "" : "none";
+    });
+}
 window.onload = loadAllResults;
 </script>
 
