@@ -210,7 +210,7 @@ async function LoadResult() {
                                 <th style="padding: 10px; border: 1px solid #ddd;">Số hiệu đề</th>
                                 <th style="padding: 10px; border: 1px solid #ddd;">Điểm</th>
                                 <th style="padding: 10px; border: 1px solid #ddd;">Số Câu Đúng</th>
-                                 <th style="padding: 10px; border: 1px solid #ddd;">Chi tiết bài làm</th>
+                                 <th style="padding: 10px; border: 1px solid #ddd;">Phúc Khảo</th>
                             </tr>
                         </thead>
                         <tbody>
