@@ -103,6 +103,9 @@ function renderQuiz() {
     document.getElementById("quiz").innerHTML = "Không có dữ liệu câu hỏi!";
     return;
 }
+
+
+
 }
 async function checkHistory() {
     if (!userId) {
