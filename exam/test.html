@@ -129,8 +129,15 @@
             font-size: 0.95rem;
         }
 
+        .required {
+            color: var(--danger);
+            font-weight: bold;
+        }
+
         input[type="text"],
         input[type="email"],
+        input[type="url"],
+        input[type="number"],
         select,
         textarea {
             width: 100%;
@@ -144,6 +151,8 @@
 
         input[type="text"]:focus,
         input[type="email"]:focus,
+        input[type="url"]:focus,
+        input[type="number"]:focus,
         select:focus,
         textarea:focus {
             outline: none;
@@ -175,6 +184,12 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .btn-add {
             background: var(--success);
             color: white;
@@ -184,6 +199,18 @@
 
         .btn-add:hover {
             background: #45a049;
+            color: white;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            background: #1565C0;
             color: white;
         }
 
@@ -242,6 +269,41 @@
             color: var(--dark);
         }
 
+        /* Preview Section */
+        .preview {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .preview h5 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .preview-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-label {
+            font-weight: 600;
+            color: var(--primary);
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
         /* Tables */
         table {
             width: 100%;
@@ -284,6 +346,23 @@
             font-weight: 600;
         }
 
+        .answer-display {
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .correct-display {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 3px solid var(--success);
+        }
+
+        .wrong-display {
+            background: rgba(244, 67, 54, 0.1);
+            border-left: 3px solid var(--danger);
+        }
+
         /* Filter Section */
         .filter-section {
             background: white;
@@ -291,16 +370,22 @@
             border-radius: 10px;
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .filter-section input {
             max-width: 400px;
+            flex: 1;
+            min-width: 250px;
         }
 
         .filter-label {
             font-weight: 600;
-            margin-right: 12px;
             color: var(--dark);
+            white-space: nowrap;
         }
 
         /* Empty State */
@@ -342,6 +427,15 @@
             .answer-row button {
                 width: 100%;
             }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-section input {
+                max-width: 100%;
+            }
         }
 
         /* Loading State */
@@ -361,6 +455,12 @@
     <h2><i class="fas fa-graduation-cap"></i> Admin DNC</h2>
     <div class="nav-item active" onclick="showSection('sec-exams', this)">
         <i class="fas fa-file-alt"></i> Quản lý Đề thi
+    </div>
+    <div class="nav-item" onclick="showSection('sec-exam', this)">
+        <i class="fas fa-file-alt"></i> Thêm Kỳ Thi
+    </div>
+     <div class="nav-item" onclick="showSection('sec-editexam', this)">
+        <i class="fas fa-file-alt"></i> Quản lý Kỳ Thi
     </div>
     <div class="nav-item" onclick="showSection('sec-results', this)">
         <i class="fas fa-chart-bar"></i> Xem Điểm
@@ -412,9 +512,11 @@
             <div class="card-body">
                 <!-- Question Type -->
                 <label for="questionType"><i class="fas fa-list"></i> Loại câu hỏi</label>
-                <select id="questionType" class="form-select">
+                <select id="questionType">
                     <option value="text">📝 Đề chữ</option>
                     <option value="img">🖼️ Đề có hình ảnh</option>
+                    <option value="text-thptqg">THPTQG_ĐS_CHỮ</option>
+                    <option value="img-thptqg">THPTQG_ĐS_HÌNH</option>
                 </select>
 
                 <!-- Question Content -->
@@ -475,7 +577,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="button" class="btn btn-add btn-lg mt-4" onclick="addQuestion()">
+                <button type="button" class="btn btn-add" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="addQuestion()">
                     <i class="fas fa-check"></i> Thêm Câu Hỏi
                 </button>
             </div>
@@ -484,7 +586,7 @@
         <!-- Current questions -->
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-list-ol"></i> Danh Sách Câu Hỏi
+                <i class="fas fa-list-ol"></i> Danh Sách Câu Hỏi (<span id="questionCount">0</span>)
             </div>
             <div class="card-body">
                 <div id="questions">
@@ -506,11 +608,12 @@
                     <div>
                         <h5 class="mb-1">Sẵn sàng đăng?</h5>
                         <div class="text-muted">
-                            Hiện có <b id="questionCount">0</b> câu hỏi.
+                            Hiện có <b id="questionCount2">0</b> câu hỏi.
                         </div>
                     </div>
 
-                    <button type="button" class="btn btn-add btn-lg"
+                    <button type="button" class="btn btn-add"
+                            style="padding: 14px 32px; font-size: 1rem;"
                             onclick="publishExam()">
                         <i class="fas fa-paper-plane"></i> Đăng Đề
                     </button>
@@ -530,6 +633,160 @@
                         <p class="mt-3">Đang tải danh sách đề...</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Management Section -->
+    <div id="sec-exam" class="section">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-file-circle-plus"></i> Thêm Bài Kiểm Tra
+            </div>
+            <div class="card-body">
+                <form id="examForm">
+                    <!-- URL -->
+                    <label for="url">
+                        <i class="fas fa-link"></i> URL bài thi / để trống thì dùng api web
+
+                    </label>
+                    <input
+                        type="url"
+                        id="url"
+                        placeholder="https://docs.google.com/forms/..."
+                    >
+
+                    <!-- Row 1 -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="time">
+                                <i class="fas fa-calendar"></i> Ngày tạo
+                                <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="time"
+                                placeholder="21/5/2026"
+                                required
+                            >
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="idexam">
+                                <i class="fas fa-hashtag"></i> Mã đề
+                                <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="idexam"
+                                placeholder="2430"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="status">
+                                <i class="fas fa-toggle-on"></i> Trạng thái
+                                <span class="required">*</span>
+                            </label>
+                            <select id="status" required>
+                                <option value="0">0 - Chưa mở</option>
+                                <option value="1">1 - Đang mở</option>
+                                <option value="2">2 - Đã đóng</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="time_exam">
+                                <i class="fas fa-clock"></i> Thời gian làm bài
+                                <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="time_exam"
+                                placeholder="15h-0h 22/5/2026"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Form Exam -->
+                    <label for="form_exam">
+                        <i class="fas fa-list-check"></i> Cấu trúc đề
+                        <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="form_exam"
+                        placeholder="50 Câu trắc nghiệm, 8 Câu đúng sai, 12 Câu trả lời ngắn"
+                        required
+                    >
+
+                    <!-- Title -->
+                    <label for="title_exam">
+                        <i class="fas fa-heading"></i> Tên bài kiểm tra
+                        <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="title_exam"
+                        placeholder="KỲ KIỂM TRA ĐÁNH GIÁ NĂNG LỰC..."
+                        required
+                    >
+
+                    <!-- Topic -->
+                    <label for="title_exam_topic">
+                        <i class="fas fa-book"></i> Môn / Chủ đề
+                        <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="title_exam_topic"
+                        placeholder="Vật lý"
+                        required
+                    >
+
+                    <!-- Description -->
+                    <label for="describe_exam">
+                        <i class="fas fa-align-left"></i> Mô tả đề
+                        <span class="required">*</span>
+                    </label>
+                    <textarea
+                        id="describe_exam"
+                        placeholder="Kiểm tra kiến thức vật lý từ lớp 10-12"
+                        required
+                    ></textarea>
+
+                    <!-- Result -->
+                    <label for="describe_exam_result">
+                        <i class="fas fa-calculator"></i> Cách tính kết quả
+                        <span class="required">*</span>
+                    </label>
+                    <textarea
+                        id="describe_exam_result"
+                        placeholder="Tính điểm theo số câu đúng liên tiếp"
+                        required
+                    ></textarea>
+
+                    <!-- Preview -->
+                    <div class="preview" id="preview">
+                        <h5><i class="fas fa-eye"></i> Xem trước</h5>
+                        <div id="previewContent" class="text-muted">
+                            Nhập dữ liệu để xem trước...
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-cloud-arrow-up"></i> Thêm Bài Kiểm Tra
+                    </button>
+                </form>
+
+                <!-- Result -->
+                <div id="result" class="result"></div>
             </div>
         </div>
     </div>
@@ -578,7 +835,132 @@
             </div>
         </div>
     </div>
+
+    <div id="sec-editexam" class="section">
+       <div class="card">
+
+    <div class="card-header"
+         style="background: linear-gradient(135deg, #6c757d, #343a40);">
+
+        <i class="fas fa-gears"></i>
+        Quản Lý Đề Thi
+
+    </div>
+
+    <div class="card-body">
+
+        <label for="manageIdexam">
+            <i class="fas fa-hashtag"></i>
+            ID đề thi
+        </label>
+
+        <input
+            type="text"
+            id="manageIdexam"
+            placeholder="Ví dụ: 2430"
+        >
+
+        <div class="d-flex gap-2 mt-3">
+
+            <!-- ĐỔI STATUS -->
+
+            <button
+                type="button"
+                class="btn"
+                onclick="toggleExamStatus()"
+                style="
+                    background:#FF9800;
+                    color:white;
+                "
+            >
+                <i class="fas fa-toggle-on"></i>
+                Bật / Tắt
+            </button>
+
+
+            <!-- XÓA -->
+
+            <button
+                type="button"
+                class="btn"
+                onclick="deleteExam()"
+                style="
+                    background:#f44336;
+                    color:white;
+                "
+            >
+                <i class="fas fa-trash"></i>
+                Xóa
+            </button>
+
+        </div>
+
+        <div
+            id="manageResult"
+            style="display:none; margin-top:20px;"
+        ></div>
+
+    </div>
+    <div class="card">
+
+    <div class="card-header"
+         style="background: linear-gradient(135deg, #2196F3, #1565C0);">
+
+        <i class="fas fa-list"></i>
+        Danh Sách Kỳ Thi
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div>
+                <span class="text-muted">
+                    Các kỳ thi hiện có trên hệ thống
+                </span>
+            </div>
+
+            <button
+                type="button"
+                class="btn"
+                onclick="loadExamList()"
+                style="
+                    background:#2196F3;
+                    color:white;
+                "
+            >
+                <i class="fas fa-rotate"></i>
+                Làm mới
+            </button>
+
+        </div>
+
+
+        <div
+            id="examList"
+        >
+
+            <div class="text-center p-4">
+
+                <div
+                    class="spinner-border text-primary"
+                    role="status"
+                ></div>
+
+                <p class="mt-2">
+                    Đang tải danh sách...
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+</div>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -588,20 +970,7 @@
     let questions = [];
 
     // ============================
-    // SECTION NAVIGATION
-    // ============================
-    function showSection(id, clickedItem) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if (clickedItem) clickedItem.classList.add('active');
-        
-        if(id === 'sec-exams') loadExams();
-        if(id === 'sec-results') loadAllResults();
-    }
-
-    // ============================
-    // UTILITY FUNCTIONS
+    // UTILITY FUNCTION
     // ============================
     function escapeHtml(text) {
         const map = {
@@ -611,7 +980,7 @@
             '"': '&quot;',
             "'": '&#039;'
         };
-        return text.replace(/[&<>"']/g, m => map[m]);
+        return String(text).replace(/[&<>"']/g, m => map[m]);
     }
 
     function showMessage(message, type = 'success') {
@@ -627,6 +996,19 @@
         container.insertBefore(alertDiv, container.firstChild);
         
         setTimeout(() => alertDiv.remove(), 5000);
+    }
+
+    // ============================
+    // SECTION NAVIGATION
+    // ============================
+    function showSection(id, clickedItem) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if (clickedItem) clickedItem.classList.add('active');
+        
+        if(id === 'sec-exams') loadExams();
+        if(id === 'sec-results') loadAllResults();
     }
 
     // ============================
@@ -651,13 +1033,10 @@
 
     function removeCorrect(btn) {
         const rows = document.querySelectorAll('#correctAnswers .answer-row');
-        
-        // Keep at least one answer
         if (rows.length <= 1) {
             showMessage('Phải có ít nhất 1 đáp án đúng', 'error');
             return;
         }
-        
         btn.closest('.answer-row').remove();
     }
 
@@ -683,13 +1062,10 @@
 
     function removeWrong(btn) {
         const rows = document.querySelectorAll('#wrongAnswers .answer-row');
-        
-        // Keep at least one answer
         if (rows.length <= 1) {
             showMessage('Phải có ít nhất 1 đáp án sai', 'error');
             return;
         }
-        
         btn.closest('.answer-row').remove();
     }
 
@@ -697,13 +1073,7 @@
     // QUESTION TYPE TOGGLE
     // ============================
     document.getElementById("questionType").addEventListener("change", function() {
-        const imageInput = document.getElementById("imageInput");
-        
-        if (this.value === "img") {
-            imageInput.style.display = "block";
-        } else {
-            imageInput.style.display = "none";
-        }
+        document.getElementById("imageInput").style.display = this.value === "img" || this.value === "img-thptqg" ? "block" : "none";
     });
 
     // ============================
@@ -714,25 +1084,19 @@
         const type = document.getElementById("questionType").value;
         const image = document.getElementById("image").value.trim();
 
-        // Get correct answers
         const correctInputs = document.querySelectorAll(".correct-input");
         const correctAnswers = Array.from(correctInputs)
             .map(input => input.value.trim())
             .filter(value => value !== "");
 
-        // Get wrong answers
         const wrongInputs = document.querySelectorAll(".wrong-input");
         const wrongAnswers = Array.from(wrongInputs)
             .map(input => input.value.trim())
             .filter(value => value !== "");
 
-        // Validation checks
-        if (!question) {
-            if(type != "img") {
-                showMessage("Chưa nhập nội dung câu hỏi.", "error");
-                 return null;
-            }
-           
+        if ((!question && type !== "img")|| (type !== "img-thptqg" && !question)) {
+            showMessage("Chưa nhập nội dung câu hỏi.", "error");
+            return null;
         }
 
         if (correctAnswers.length === 0) {
@@ -750,13 +1114,7 @@
             return null;
         }
 
-        return {
-            question,
-            type,
-            image,
-            correctAnswers,
-            wrongAnswers
-        };
+        return { question, type, image, correctAnswers, wrongAnswers };
     }
 
     // ============================
@@ -764,26 +1122,21 @@
     // ============================
     function addQuestion() {
         const data = validateQuestion();
-        
         if (!data) return;
 
         const newQuestion = {
             ans: data.correctAnswers,
-            ans_w: data.wrongAnswers.map(answer => ({
-                label: answer
-            })),
+            ans_w: data.wrongAnswers.map(answer => ({ label: answer })),
             label: data.question,
             type_laber: data.type
         };
 
-        // Add image if present
         if (data.type === "img") {
             newQuestion.image = data.image;
         }
 
         questions.push(newQuestion);
         showMessage("Câu hỏi đã được thêm thành công!", "success");
-        
         resetForm();
         renderQuestions();
     }
@@ -797,28 +1150,18 @@
         document.getElementById("questionType").value = "text";
         document.getElementById("imageInput").style.display = "none";
 
-        // Reset correct answers
         document.getElementById("correctAnswers").innerHTML = `
             <div class="answer-row">
-                <input 
-                    type="text" 
-                    class="correct-input" 
-                    placeholder="Nhập đáp án đúng..."
-                >
+                <input type="text" class="correct-input" placeholder="Nhập đáp án đúng...">
                 <button type="button" class="btn btn-delete" onclick="removeCorrect(this)">
                     <i class="fas fa-trash"></i> Xóa
                 </button>
             </div>
         `;
 
-        // Reset wrong answers
         document.getElementById("wrongAnswers").innerHTML = `
             <div class="answer-row">
-                <input 
-                    type="text" 
-                    class="wrong-input" 
-                    placeholder="Nhập đáp án sai..."
-                >
+                <input type="text" class="wrong-input" placeholder="Nhập đáp án sai...">
                 <button type="button" class="btn btn-delete" onclick="removeWrong(this)">
                     <i class="fas fa-trash"></i> Xóa
                 </button>
@@ -831,8 +1174,8 @@
     // ============================
     function renderQuestions() {
         const container = document.getElementById("questions");
-        
-        if (!container) return;
+        document.getElementById("questionCount").textContent = questions.length;
+        document.getElementById("questionCount2").textContent = questions.length;
 
         if (questions.length === 0) {
             container.innerHTML = `
@@ -844,65 +1187,39 @@
             return;
         }
 
-        container.innerHTML = "";
-
-        questions.forEach((q, index) => {
-            const div = document.createElement("div");
-            div.className = "card";
-
-            const correctHTML = (Array.isArray(q.ans) ? q.ans : [q.ans].filter(Boolean))
-                .map(answer => `
-                    <div class="answer-display correct-display">
-                        <i class="fas fa-check-circle" style="color: var(--success);"></i>
-                        ${escapeHtml(answer)}
-                    </div>
-                `)
-                .join("");
-
-            const wrongHTML = (Array.isArray(q.ans_w) ? q.ans_w : [])
-                .map(answer => `
-                    <div class="answer-display wrong-display">
-                        <i class="fas fa-times-circle" style="color: var(--danger);"></i>
-                        ${escapeHtml(answer.label)}
-                    </div>
-                `)
-                .join("");
-
-            const imageHTML = q.type_laber === "img"
-                ? `<img src="${escapeHtml(q.image)}" style="max-width:300px; display:block; margin:15px 0; border-radius:8px;">`
-                : "";
-
-            div.innerHTML = `
+        container.innerHTML = questions.map((q, index) => `
+            <div class="card">
                 <div class="card-header">
                     <i class="fas fa-question-circle"></i>
                     Câu ${index + 1} [${q.type_laber === 'img' ? '🖼️ Hình ảnh' : '📝 Chữ'}]
                 </div>
                 <div class="card-body">
                     <p style="font-weight: 600; margin-bottom: 15px;">${escapeHtml(q.label)}</p>
-                    ${imageHTML}
+                    ${q.type_laber === "img" ? `<img src="${escapeHtml(q.image)}" style="max-width:300px; display:block; margin:15px 0; border-radius:8px;">` : ""}
                     <div style="margin-top: 15px;">
                         <h6 style="color: var(--success); margin-bottom: 10px;">
                             <i class="fas fa-check-circle"></i> Đáp án đúng:
                         </h6>
-                        ${correctHTML}
+                        ${(Array.isArray(q.ans) ? q.ans : [q.ans].filter(Boolean))
+                            .map(answer => `<div class="answer-display correct-display">
+                                <i class="fas fa-check-circle"></i> ${escapeHtml(answer)}
+                            </div>`).join("")}
                     </div>
                     <div style="margin-top: 15px;">
                         <h6 style="color: var(--danger); margin-bottom: 10px;">
                             <i class="fas fa-times-circle"></i> Đáp án sai:
                         </h6>
-                        ${wrongHTML}
+                        ${(Array.isArray(q.ans_w) ? q.ans_w : [])
+                            .map(answer => `<div class="answer-display wrong-display">
+                                <i class="fas fa-times-circle"></i> ${escapeHtml(answer.label)}
+                            </div>`).join("")}
                     </div>
-                    <button 
-                        class="btn btn-delete mt-3" 
-                        onclick="deleteQuestion(${index})"
-                    >
+                    <button class="btn btn-delete mt-3" onclick="deleteQuestion(${index})">
                         <i class="fas fa-trash"></i> Xóa câu này
                     </button>
                 </div>
-            `;
-
-            container.appendChild(div);
-        });
+            </div>
+        `).join("");
     }
 
     // ============================
@@ -954,9 +1271,7 @@
         try {
             const response = await fetch('https://dnc-svc.palat.io.vn/exam/create', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(examData)
             });
 
@@ -968,12 +1283,10 @@
 
             showMessage('Đăng đề thành công! Mã đề: ' + idexam, 'success');
 
-            // Reset toàn bộ form sau khi đăng thành công.
             questions = [];
             document.getElementById('examId').value = '';
             document.getElementById('examTitle').value = '';
             document.getElementById('examPoint').value = '0.25';
-
             resetForm();
             renderQuestions();
             loadExams();
@@ -989,7 +1302,6 @@
     // ============================
     async function loadExams() {
         const container = document.getElementById('publishedExams');
-
         if (!container) return;
 
         try {
@@ -1047,11 +1359,6 @@
             `;
         }
     }
-
-    // ============================
-    // LOAD EXAMS
-    // ============================
-
 
     // ============================
     // LOAD ALL RESULTS
@@ -1122,11 +1429,559 @@
         });
     }
 
+    // ============================
+    // PREVIEW UPDATE
+    // ============================
+    function updatePreview() {
+        const title = document.getElementById("title_exam").value;
+        const id = document.getElementById("idexam").value;
+        const topic = document.getElementById("title_exam_topic").value;
+        const time = document.getElementById("time_exam").value;
+        const status = document.getElementById("status").value;
+
+        document.getElementById("previewContent").innerHTML = `
+            <div class="preview-item">
+                <span class="preview-label">Tên đề:</span>
+                ${escapeHtml(title || "Chưa nhập")}
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Mã đề:</span>
+                ${escapeHtml(id || "Chưa nhập")}
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Chủ đề:</span>
+                ${escapeHtml(topic || "Chưa nhập")}
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Thời gian:</span>
+                ${escapeHtml(time || "Chưa nhập")}
+            </div>
+            <div class="preview-item">
+                <span class="preview-label">Trạng thái:</span>
+                ${status}
+            </div>
+        `;
+    }
+
+    document.querySelectorAll("#examForm input, #examForm textarea, #examForm select").forEach(element => {
+        element.addEventListener("input", updatePreview);
+        element.addEventListener("change", updatePreview);
+    });
+
+    // ============================
+    // FORM SUBMIT
+    // ============================
+    document.getElementById("examForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const examData = {
+            url: document.getElementById("url").value.trim(),
+            time: document.getElementById("time").value.trim(),
+            idexam: document.getElementById("idexam").value.trim(),
+            status: document.getElementById("status").value,
+            form_exam: document.getElementById("form_exam").value.trim(),
+            time_exam: document.getElementById("time_exam").value.trim(),
+            title_exam: document.getElementById("title_exam").value.trim(),
+            describe_exam: document.getElementById("describe_exam").value.trim(),
+            title_exam_topic: document.getElementById("title_exam_topic").value.trim(),
+            describe_exam_result: document.getElementById("describe_exam_result").value.trim()
+        };
+
+        try {
+            const button = this.querySelector("button[type='submit']");
+            button.disabled = true;
+            button.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Đang đăng...`;
+
+            const response = await fetch("https://dnc-svc.palat.io.vn/exam/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(examData)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Không thể thêm bài kiểm tra");
+            }
+
+            document.getElementById("result").style.display = "block";
+            document.getElementById("result").innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-circle-check"></i>
+                    <strong>Thêm bài kiểm tra thành công!</strong>
+                    <hr>
+                    Mã đề: <strong>${escapeHtml(data.exam.idexam)}</strong><br>
+                    Tên đề: ${escapeHtml(data.exam.title_exam)}
+                </div>
+            `;
+
+            this.reset();
+            updatePreview();
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById("result").style.display = "block";
+            document.getElementById("result").innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-circle-exclamation"></i>
+                    <strong>Lỗi:</strong> ${escapeHtml(error.message)}
+                </div>
+            `;
+
+        } finally {
+            const button = this.querySelector("button[type='submit']");
+            button.disabled = false;
+            button.innerHTML = `<i class="fas fa-cloud-arrow-up"></i> Thêm Bài Kiểm Tra`;
+        }
+    });
+
+    // ============================
+    // INIT
+    // ============================
     window.addEventListener('DOMContentLoaded', function() {
         renderQuestions();
         loadExams();
         loadAllResults();
+        updatePreview();
+        loadExamList();
     });
+    async function toggleExamStatus() {
+
+    const idexam =
+        document
+            .getElementById("manageIdexam")
+            .value
+            .trim();
+
+    const result =
+        document.getElementById("manageResult");
+
+    if (!idexam) {
+        showManageResult(
+            "Vui lòng nhập idexam.",
+            "warning"
+        );
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "https://dnc-svc.palat.io.vn/exam/toggle-status",
+            {
+                method: "PATCH",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    idexam
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                "Không thể đổi trạng thái"
+            );
+        }
+
+        const status =
+            String(data.status) === "1"
+                ? "ĐANG MỞ"
+                : "ĐANG TẮT";
+
+        showManageResult(
+            `Đề ${idexam} hiện đang: ${status}`,
+            "success"
+        );
+
+    } catch (error) {
+
+        showManageResult(
+            error.message,
+            "danger"
+        );
+
+    }
+}
+
+
+async function deleteExam() {
+
+    const idexam =
+        document
+            .getElementById("manageIdexam")
+            .value
+            .trim();
+
+    if (!idexam) {
+
+        showManageResult(
+            "Vui lòng nhập idexam.",
+            "warning"
+        );
+
+        return;
+    }
+
+
+    // Xác nhận để tránh xóa nhầm
+
+    const confirmDelete = confirm(
+        `Bạn có chắc muốn XÓA đề ${idexam} không?\n\nHành động này không thể hoàn tác.`
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch(
+            "https://dnc-svc.palat.io.vn/exam/delete",
+            {
+                method: "DELETE",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    idexam
+                })
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Không thể xóa đề"
+            );
+
+        }
+
+
+        showManageResult(
+            `Đã xóa thành công đề ${idexam}.`,
+            "success"
+        );
+
+        document
+            .getElementById("manageIdexam")
+            .value = "";
+
+
+    } catch (error) {
+
+        showManageResult(
+            error.message,
+            "danger"
+        );
+
+    }
+}
+
+
+function showManageResult(message, type) {
+
+    const result =
+        document.getElementById(
+            "manageResult"
+        );
+
+    result.style.display = "block";
+
+    result.innerHTML = `
+        <div class="alert alert-${type}">
+            ${escapeHtml(message)}
+        </div>
+    `;
+}
+async function loadExamList() {
+
+    const container =
+        document.getElementById("examList");
+
+    container.innerHTML = `
+
+        <div class="text-center p-4">
+
+            <div
+                class="spinner-border text-primary"
+                role="status"
+            ></div>
+
+            <p class="mt-2">
+                Đang tải danh sách...
+            </p>
+
+        </div>
+
+    `;
+
+
+    try {
+
+        const response = await fetch(
+            "https://dnc-svc.palat.io.vn/exam/list"
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " + response.status
+            );
+
+        }
+
+
+        const result =
+            await response.json();
+
+
+        console.log(
+            "Danh sách kỳ thi:",
+            result
+        );
+
+
+        /*
+         * API có thể trả:
+         *
+         * {
+         *   data_exam: [...]
+         * }
+         *
+         * hoặc
+         *
+         * {
+         *   exams: [...]
+         * }
+         *
+         * hoặc trực tiếp [...]
+         */
+
+        let exams = [];
+
+        if (Array.isArray(result)) {
+
+            exams = result;
+
+        } else if (
+            Array.isArray(result.data_exam)
+        ) {
+
+            exams = result.data_exam;
+
+        } else if (
+            Array.isArray(result.exams)
+        ) {
+
+            exams = result.exams;
+
+        }
+
+
+        if (exams.length === 0) {
+
+            container.innerHTML = `
+
+                <div class="alert alert-info">
+
+                    <i class="fas fa-info-circle"></i>
+
+                    Chưa có kỳ thi nào.
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        container.innerHTML = `
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>ID</th>
+
+                            <th>Tên kỳ thi</th>
+
+                            <th>Môn</th>
+
+                            <th>Thời gian</th>
+
+                            <th>Trạng thái</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        ${exams.map(
+                            (exam, index) => {
+
+                                const status =
+                                    String(
+                                        exam.status
+                                    );
+
+                                let statusHTML;
+
+                                if (status === "1") {
+
+                                    statusHTML = `
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-circle-check"></i>
+                                            Đang mở
+                                        </span>
+                                    `;
+
+                                } else {
+
+                                    statusHTML = `
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-circle-xmark"></i>
+                                            Đang tắt
+                                        </span>
+                                    `;
+
+                                }
+
+
+                                return `
+
+                                    <tr>
+
+                                        <td>
+                                            ${index + 1}
+                                        </td>
+
+                                        <td>
+                                            <strong>
+                                                ${escapeHtml(
+                                                    String(
+                                                        exam.idexam ?? ""
+                                                    )
+                                                )}
+                                            </strong>
+                                        </td>
+
+                                        <td>
+
+                                            <strong>
+                                                ${escapeHtml(
+                                                    String(
+                                                        exam.title_exam ?? ""
+                                                    )
+                                                )}
+                                            </strong>
+
+                                            <br>
+
+                                            <small class="text-muted">
+                                                ${escapeHtml(
+                                                    String(
+                                                        exam.describe_exam ?? ""
+                                                    )
+                                                )}
+                                            </small>
+
+                                        </td>
+
+                                        <td>
+                                            ${escapeHtml(
+                                                String(
+                                                    exam.title_exam_topic ?? ""
+                                                )
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            ${escapeHtml(
+                                                String(
+                                                    exam.time_exam ?? ""
+                                                )
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            ${statusHTML}
+                                        </td>
+
+                                    </tr>
+
+                                `;
+
+                            }
+                        ).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+
+    } catch (error) {
+
+        console.error(
+            "Lỗi lấy danh sách kỳ thi:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="alert alert-danger">
+
+                <i class="fas fa-triangle-exclamation"></i>
+
+                Không thể tải danh sách kỳ thi.
+
+                <br>
+
+                <small>
+                    ${escapeHtml(
+                        error.message
+                    )}
+                </small>
+
+            </div>
+
+        `;
+
+    }
+
+}
 </script>
 </body>
 </html>
