@@ -122,7 +122,7 @@ async function LoadAccount() {
      
 }
 async function Load_Home(){
-    const res = await fetch("https://data.palat.io.vn/clbnamha/read");
+    const res = await fetch("https://dnc-svc.palat.io.vn/exam/list");
     const data_return_json = await res.json();
     console.log(data_return_json,data_return_json.title)
     
