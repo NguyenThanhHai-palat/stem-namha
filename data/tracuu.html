@@ -143,108 +143,11 @@
     <div class="container">
         <h2>Tra Cứu Kết Quả Trúng Tuyển</h2>
         
-        <div class="search-box">
-            <label for="studentSelect">Chọn Họ và Tên (STT):</label>
-            <select id="studentSelect" onchange="fetchData(this.value)">
-              <option value="" disabled selected>-- Chọn để tra cứu --</option>
-              <option value="1">1 - Đỗ Nguyễn Kim Anh</option>
-              <option value="2">2 - Tăng Huỳnh Ngọc Anh</option>
-              <option value="3">3 - Phạm Huỳnh Khắc Duy</option>
-              <option value="4">4 - Hồ Quốc Đạt</option>
-              <option value="5">5 - Nguyễn Phan Kim Đạt</option>
-              <option value="6">6 - Trần Thành Đạt</option>
-              <option value="7">7 - Vũ Thành Đạt</option>
-              <option value="8">8 - Nguyễn Thanh Hải</option>
-              <option value="9">9 - Trương Minh Hằng</option>
-              <option value="10">10 - Phạm Trần Minh Hiếu</option>
-              <option value="11">11 - Phan Tấn Hòa</option>
-              <option value="12">12 - Trần Hòa</option>
-              <option value="13">13 - Nguyễn Hữu Hoàng</option>
-              <option value="14">14 - Chu Nhật Huy</option>
-              <option value="15">15 - Huỳnh Phúc Khang</option>
-              <option value="16">16 - Lưu Duy Khang</option>
-              <option value="17">17 - Lê Khoa</option>
-              <option value="18">18 - Vũ Đình Khôi</option>
-              <option value="19">19 - Trần Tuấn Kiệt</option>
-              <option value="20">20 - Nguyễn Hoàng Khánh Lam</option>
-              <option value="21">21 - Trần Hữu Lộc</option>
-              <option value="22">22 - Lê Thị Cẩm Ly</option>
-              <option value="23">23 - Trần Tuyết Mai</option>
-              <option value="24">24 - Phạm Bình Minh</option>
-              <option value="25">25 - Đồng Thanh Ngân</option>
-              <option value="27">27 - Nguyễn Trần Kim Ngân</option>
-              <option value="28">28 - Nguyễn Phạm Bảo Ngọc</option>
-              <option value="29">29 - Ôn Minh Nhã</option>
-              <option value="30">30 - Đinh Trần Quỳnh Như</option>
-              <option value="31">31 - Nguyễn Ngô Đăng Phúc</option>
-              <option value="32">32 - Nguyễn Thanh Phúc</option>
-              <option value="33">33 - Phạm Minh Phương</option>
-              <option value="34">34 - Nguyễn Duy Quang</option>
-              <option value="35">35 - Phạm Hồ Minh Quang</option>
-              <option value="36">36 - Đặng Thị Diễm Quỳnh</option>
-              <option value="37">37 - Đỗ Phương Thảo</option>
-              <option value="38">38 - Trần Ngọc Anh Thy</option>
-              <option value="39">39 - Nguyễn Đức Trí</option>
-              <option value="40">40 - Nguyễn Đức Trí (2)</option>
-              <option value="41">41 - Nguyễn Hoàng Trinh</option>
-              <option value="42">42 - Hồ Thanh Trúc</option>
-              <option value="43">43 - Nguyễn Cát Tường</option>
-          </select>
-        </div>
+    
 
-        <div id="loading" class="loading">Đang tải dữ liệu...</div>
-        <div id="resultContainer" class="result-container">
-            <div class="result-title">Thông Tin Trúng Tuyển</div>
-            
-            <div class="result-item">
-                <span class="label-name">STT:</span>
-                <span class="value-name" id="resSTT">--</span>
-            </div>
-            <div class="result-item">
-                <span class="label-name">Họ và Tên:</span>
-                <span class="value-name" id="resHoTen">--</span>
-            </div>
-            <div class="result-item">
-                <span class="label-name">Trường Trúng Tuyển:</span>
-                <span class="value-name" id="resTruong">--</span>
-            </div>
-            <div class="result-item">
-                <span class="label-name">Ngành Trúng Tuyển:</span>
-                <span class="value-name" id="resNganh">--</span>
-            </div>
-        </div>
+        <div>Tạm đóng trang tra cứu vì lí do bảo mật</div>
+
     </div>
 
-    <script>
-        async function fetchData(stt) {
-            if (!stt) return;
-
-            const resultContainer = document.getElementById('resultContainer');
-            const loading = document.getElementById('loading');
-            resultContainer.classList.remove('active');
-            loading.style.display = 'block';
-
-            try {
-                const response = await fetch(`https://api.palat.io.vn/tracuu/${stt}`);
-                
-                if (!response.ok) {
-                    throw new Error('Không thể kết nối đến máy chủ hoặc không tìm thấy dữ liệu.');
-                }
-
-                const data = await response.json();
-                document.getElementById('resSTT').textContent = data.STT || '--';
-                document.getElementById('resHoTen').textContent = data.Ho_Va_Ten || '--';
-                document.getElementById('resTruong').textContent = data.Tr || '--';
-                document.getElementById('resNganh').textContent = data.Ng || '--';
-
-                resultContainer.classList.add('active');
-            } catch (error) {
-                alert('Lỗi: ' + error.message);
-            } finally {
-                // Tắt trạng thái loading
-                loading.style.display = 'none';
-            }
-        }
-    </script>
 </body>
 </html>
