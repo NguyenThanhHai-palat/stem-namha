@@ -404,7 +404,7 @@ async function checkHistory() {
         if (currentExamHistory) {
             document.getElementById("quiz").innerHTML = `
                 <div style="text-align:center;padding:30px;border:2px dashed #2196F3;border-radius:10px;">
-                    <h2 style="color:#2196F3;">BẠN ĐÃ HOÀN THÀNH ĐỀ SỐ ${escapeHtml(idExam)}</h2>
+                    <h2 style="color:#2196F3;">BẠN ĐÃ HOÀN THÀNH ĐỀ SỐ ${nameofexam}</h2>
                     <p style="font-size:1.5em;">Điểm đạt được: <span style="color:red;font-weight:bold;">${escapeHtml(currentExamHistory.total_score)}</span></p>
                     <p>Số câu đúng: ${escapeHtml(currentExamHistory.correct_count)}/${escapeHtml(currentExamHistory.total_questions)}</p>
                     <p><i>Bạn đã hoàn thành đề này.</i></p>

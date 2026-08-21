@@ -2,7 +2,7 @@
   { "STT": "1", "Ho_Va_Ten": "Đỗ Nguyễn Kim Anh", "Tr": "KHÔNG CÓ THÔNG TIN", "Ng": "" },
   { "STT": "2", "Ho_Va_Ten": "Tăng Huỳnh Ngọc Anh", "Tr": "TRƯỜNG ĐẠI HỌC GIAO THÔNG VẬN TẢI TPHCM", "Ng": "Logistics và quản lý chuỗi cung ứng" },
   { "STT": "3", "Ho_Va_Ten": "Phạm Huỳnh Khắc Duy", "Tr": "TRƯỜNG ĐẠI HỌC BÁCH KHOA - ĐHQGTPHCM", "Ng": "Bảo dưỡng Công nghiệp" },
-  { "STT": "4", "Ho_Va_Ten": "Hồ Quốc Đạt", "Tr": "KHÔNG CÓ THÔNG TIN", "Ng": "" },
+  { "STT": "4", "Ho_Va_Ten": "Hồ Quốc Đạt", "Tr": "TRƯỜNG ĐẠI HỌC LẠC HỒNG", "Ng": "CNKT CƠ ĐIỆN TỬ" },
   { "STT": "5", "Ho_Va_Ten": "Nguyễn Phan Kim Đạt", "Tr": "TRƯỜNG ĐẠI HỌC GIAO THÔNG VẬN TẢI TPHCM", "Ng": "Kỹ thuật môi trường" },
   { "STT": "6", "Ho_Va_Ten": "Trần Thành Đạt", "Tr": "TRƯỜNG ĐẠI HỌC LẠC HỒNG", "Ng": "CNKT CƠ ĐIỆN TỬ" },
   { "STT": "7", "Ho_Va_Ten": "Vũ Thành Đạt", "Tr": "TRƯỜNG ĐẠI HỌC CÔNG THƯƠNG TPHCM", "Ng": "CNKT ĐIỆN ĐIỆN TỬ" },

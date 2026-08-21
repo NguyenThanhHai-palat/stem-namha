@@ -165,9 +165,8 @@ async function Load_Home(){
                 <div class="card" id="exam-describe-total_result">
                     <i class="fas fa-check-circle"></i>
                     <div>
-                        <h4>Quy định thang điểm</h4>
+                        <h4>Quy định thang điểm ở từng bài thi</h4>
                         <hr>
-                        <h4>Đối với bài thi </h4>
                         ${examlist_score}
                         
                     </div>
@@ -207,7 +206,7 @@ async function LoadResult() {
                         <thead>
                             <tr style="background: #2196F3; color: white;">
                                 <th style="padding: 10px; border: 1px solid #ddd;">Tên bài</th>
-                                <th style="padding: 10px; border: 1px solid #ddd;">Số hiệu đề</th>
+                                <th style="padding: 10px; border: 1px solid #ddd;">Xem lại bài làm</th>
                                 <th style="padding: 10px; border: 1px solid #ddd;">Điểm</th>
                                 <th style="padding: 10px; border: 1px solid #ddd;">Số Câu Đúng</th>
                             </tr>
@@ -220,7 +219,7 @@ async function LoadResult() {
                 htmlContent += `
                     <tr style="text-align: center;">
                         <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.nameexam}</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.idexam}</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;"><a href="/exam/dethi?id-exam=${item.idexam}&view-exam=${item.idexam}" target="_blank">Xem lại</a></td>
                         <td style="padding: 10px; border: 1px solid #ddd; color: red; font-weight: bold;">${item.total_score || item.score}</td>
                         <td style="padding: 10px; border: 1px solid #ddd;">${item.correct_count || item.correct}/${item.total_questions || item.total}</td>
                     </tr>
